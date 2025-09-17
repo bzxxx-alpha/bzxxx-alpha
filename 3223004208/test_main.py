@@ -61,5 +61,30 @@ def test_compute_duplicate_rate_punctuation():     #文本含标点
     assert rate >= 90.0
 
 
+# ----------------- 主函数文件执行测试 -----------------
+def test_main_correct_execution():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orig_path = os.path.join(tmpdir, "orig.txt")
+        plag_path = os.path.join(tmpdir, "plag.txt")
+        out_path = os.path.join(tmpdir, "out.txt")
 
+        with open(orig_path, "w", encoding="utf-8") as f:
+            f.write("今天是星期天，天气晴")
+
+        with open(plag_path, "w", encoding="utf-8") as f:
+            f.write("今天是周天，天气晴朗")
+
+        sys.argv = ["plagiarism_checker.py", orig_path, plag_path, out_path]
+        pc.main()
+
+        with open(out_path, "r", encoding="utf-8") as f:
+            result = f.read().strip()
+
+        assert result.replace(".", "").isdigit() and len(result.split(".")[1]) == 2
+
+
+def test_main_missing_file():
+    sys.argv = ["plagiarism_checker.py", "nofile.txt", "also_no.txt", "out.txt"]
+    with pytest.raises(SystemExit):
+        pc.main()
 
