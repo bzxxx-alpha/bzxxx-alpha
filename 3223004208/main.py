@@ -61,4 +61,31 @@ def compute_duplicate_rate(orig_text, plag_text, as_percentage=True):
         rate *= 100.0
     return rate
 
+def main():
+    if len(sys.argv) != 4:
+        print("Usage: python3 main.py <orig_path> <plag_path> <out_path>")
+        sys.exit(2)
+
+    orig_path = sys.argv[1]
+    plag_path = sys.argv[2]
+    out_path = sys.argv[3]
+
+    if not os.path.isfile(orig_path):
+        print("原文文件不存在:", orig_path)
+        sys.exit(2)
+    if not os.path.isfile(plag_path):
+        print("抄袭版文件不存在:", plag_path)
+        sys.exit(2)
+
+    orig_text = read_file(orig_path)
+    plag_text = read_file(plag_path)
+    rate = compute_duplicate_rate(orig_text, plag_text, as_percentage=True)
+
+    # 写入答案文件，保留两位小数
+    with open(out_path, 'w', encoding='utf-8') as f:
+        f.write("{:.2f}".format(rate))
+
+
+if __name__ == '__main__':
+    main()
 
